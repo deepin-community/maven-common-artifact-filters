@@ -25,7 +25,7 @@ import java.util.List;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.codehaus.plexus.logging.Logger;
+import org.slf4j.Logger;
 
 /**
  * <p>
@@ -66,7 +66,7 @@ public class ScopeArtifactFilter
     private final List<String> filteredArtifactIds = new ArrayList<>();
     
     /**
-     * Constructor that is meant to be used with fine-grained manipulation to 
+     * Constructor that is meant to be used with fine-grained manipulation to
      * enable/disable specific scopes using the associated mutator methods.
      */
     public ScopeArtifactFilter()
@@ -79,7 +79,7 @@ public class ScopeArtifactFilter
      * Constructor that uses the implied nature of Maven scopes to determine which
      * artifacts to include. For instance, 'test' scope implies compile, provided, and runtime,
      * while 'runtime' scope implies only compile.
-     * 
+     *
      * @param scope the scope
      */
     public ScopeArtifactFilter( String scope )
@@ -164,6 +164,8 @@ public class ScopeArtifactFilter
     }
 
     /**
+     * <p>toString.</p>
+     *
      * @return Information converted to a string.
      */
     public String toString()
@@ -228,47 +230,27 @@ public class ScopeArtifactFilter
                 report = true;
             }
 
-            if ( report )
+            if ( report && logger.isDebugEnabled() )
             {
-                logger.debug( "The following scope filters were not used: " + buffer.toString() );
+                logger.debug( "The following scope filters were not used: " + buffer );
             }
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * @return a boolean.
+     */
     public boolean hasMissedCriteria()
     {
-        boolean report = false;
-
-        if ( !nullScopeHit )
-        {
-            report = true;
-        }
-        if ( !compileScopeHit )
-        {
-            report = true;
-        }
-        if ( !runtimeScopeHit )
-        {
-            report = true;
-        }
-        if ( !testScopeHit )
-        {
-            report = true;
-        }
-        if ( !providedScopeHit )
-        {
-            report = true;
-        }
-        if ( !systemScopeHit )
-        {
-            report = true;
-        }
-
-        return report;
+        return !nullScopeHit || !compileScopeHit || !runtimeScopeHit || !testScopeHit || !providedScopeHit
+                || !systemScopeHit;
     }
     
     /**
+     * <p>isIncludeCompileScope.</p>
+     *
      * @return {@link #includeCompileScope}
      */
     public boolean isIncludeCompileScope()
@@ -277,8 +259,10 @@ public class ScopeArtifactFilter
     }
 
     /**
+     * <p>Setter for the field <code>includeCompileScope</code>.</p>
+     *
      * @param pIncludeCompileScope true/false.
-     * @return {@link ScopeArtifactFilter}
+     * @return {@link org.apache.maven.shared.artifact.filter.ScopeArtifactFilter}
      */
     public ScopeArtifactFilter setIncludeCompileScope( boolean pIncludeCompileScope )
     {
@@ -288,6 +272,8 @@ public class ScopeArtifactFilter
     }
 
     /**
+     * <p>isIncludeRuntimeScope.</p>
+     *
      * @return {@link #includeRuntimeScope}
      */
     public boolean isIncludeRuntimeScope()
@@ -296,8 +282,10 @@ public class ScopeArtifactFilter
     }
 
     /**
+     * <p>Setter for the field <code>includeRuntimeScope</code>.</p>
+     *
      * @param pIncludeRuntimeScope true/false
-     * @return {@link ScopeArtifactFilter}
+     * @return {@link org.apache.maven.shared.artifact.filter.ScopeArtifactFilter}
      */
     public ScopeArtifactFilter setIncludeRuntimeScope( boolean pIncludeRuntimeScope )
     {
@@ -307,6 +295,8 @@ public class ScopeArtifactFilter
     }
 
     /**
+     * <p>isIncludeTestScope.</p>
+     *
      * @return {@link #includeTestScope}
      */
     public boolean isIncludeTestScope()
@@ -315,8 +305,10 @@ public class ScopeArtifactFilter
     }
 
     /**
+     * <p>Setter for the field <code>includeTestScope</code>.</p>
+     *
      * @param pIncludeTestScope {@link #includeTestScope}
-     * @return {@link ScopeArtifactFilter}
+     * @return {@link org.apache.maven.shared.artifact.filter.ScopeArtifactFilter}
      */
     public ScopeArtifactFilter setIncludeTestScope( boolean pIncludeTestScope )
     {
@@ -326,6 +318,8 @@ public class ScopeArtifactFilter
     }
 
     /**
+     * <p>isIncludeProvidedScope.</p>
+     *
      * @return {@link #includeProvidedScope}
      */
     public boolean isIncludeProvidedScope()
@@ -334,6 +328,8 @@ public class ScopeArtifactFilter
     }
 
     /**
+     * <p>Setter for the field <code>includeProvidedScope</code>.</p>
+     *
      * @param pIncludeProvidedScope yes/no.
      * @return {@link #ScopeArtifactFilter()}
      */
@@ -345,6 +341,8 @@ public class ScopeArtifactFilter
     }
 
     /**
+     * <p>isIncludeSystemScope.</p>
+     *
      * @return {@link #includeSystemScope}
      */
     public boolean isIncludeSystemScope()
@@ -352,7 +350,12 @@ public class ScopeArtifactFilter
         return includeSystemScope;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * @param pIncludeSystemScope a boolean.
+     * @return a {@link org.apache.maven.shared.artifact.filter.ScopeArtifactFilter} object.
+     */
     public ScopeArtifactFilter setIncludeSystemScope( boolean pIncludeSystemScope )
     {
         this.includeSystemScope = pIncludeSystemScope;
@@ -362,7 +365,7 @@ public class ScopeArtifactFilter
     
     /**
      * Manages the following scopes:
-     * 
+     *
      * <ul>
      *   <li>system</li>
      *   <li>provided</li>
@@ -370,7 +373,7 @@ public class ScopeArtifactFilter
      * </ul>
      *
      * @param enabled whether specified scopes should be included
-     * @return this instance 
+     * @return this instance
      */
     public ScopeArtifactFilter setIncludeCompileScopeWithImplications( boolean enabled )
     {
@@ -383,14 +386,14 @@ public class ScopeArtifactFilter
     
     /**
      * Manages the following scopes:
-     * 
+     *
      * <ul>
      *   <li>compile</li>
      *   <li>runtime</li>
      * </ul>
      *
      * @param enabled whether specified scopes should be included
-     * @return this instance 
+     * @return this instance
      */
     public ScopeArtifactFilter setIncludeRuntimeScopeWithImplications( boolean enabled )
     {
@@ -402,7 +405,7 @@ public class ScopeArtifactFilter
 
     /**
      * Manages the following scopes:
-     * 
+     *
      * <ul>
      *   <li>system</li>
      *   <li>provided</li>
@@ -412,7 +415,7 @@ public class ScopeArtifactFilter
      * </ul>
      *
      * @param enabled whether specified scopes should be included
-     * @return this instance 
+     * @return this instance
      */
     public ScopeArtifactFilter setIncludeTestScopeWithImplications( boolean enabled )
     {
@@ -429,7 +432,7 @@ public class ScopeArtifactFilter
      * Determine whether artifacts that have a null scope are included or excluded.
      *
      * @param enable whether null-scope should be included
-     * @return this instance 
+     * @return this instance
      */
     public ScopeArtifactFilter setIncludeNullScope( boolean enable )
     {
@@ -441,7 +444,7 @@ public class ScopeArtifactFilter
     /**
      * Reset hit counts and tracking of filtered artifacts, BUT NOT ENABLED SCOPES.
      *
-     * @return this instance 
+     * @return this instance
      */
     public ScopeArtifactFilter reset()
     {

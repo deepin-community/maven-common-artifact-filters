@@ -19,25 +19,31 @@ package org.apache.maven.shared.artifact.filter;
  * under the License.
  */
 
-import org.codehaus.plexus.logging.Logger;
+import org.slf4j.Logger;
 
 /**
- * 
+ * StatisticsReportingArtifactFilter interface.
  */
 public interface StatisticsReportingArtifactFilter
 {
 
     /**
+     * <p>reportMissedCriteria.</p>
+     *
      * @param logger the logger
      */
     void reportMissedCriteria( Logger logger );
 
     /**
+     * <p>reportFilteredArtifacts.</p>
+     *
      * @param logger the logger
      */
     void reportFilteredArtifacts( Logger logger );
 
     /**
+     * <p>hasMissedCriteria.</p>
+     *
      * @return {@code true} if missed criteria; {@code false} otherwise.
      */
     boolean hasMissedCriteria();
