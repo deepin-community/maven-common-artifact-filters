@@ -25,9 +25,12 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
-import org.apache.maven.shared.utils.StringUtils;
+
+import static org.apache.maven.shared.artifact.filter.internal.Utils.isNotEmpty;
 
 /**
+ * <p>ScopeFilter class.</p>
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class ScopeFilter
@@ -39,6 +42,8 @@ public class ScopeFilter
     private String excludeScope;
 
     /**
+     * <p>Constructor for ScopeFilter.</p>
+     *
      * @param includeScope the scope to be included.
      * @param excludeScope the scope to be excluded.
      */
@@ -49,21 +54,17 @@ public class ScopeFilter
     }
 
     /**
+     * {@inheritDoc}
+     *
      * This function determines if filtering needs to be performed. Excludes are
      * ignored if Includes are used.
-     * 
-     * @param artifacts
-     *            the set of artifacts to filter.
-     * 
-     * @return a Set of filtered artifacts.
-     * @throws ArtifactFilterException when there's an invalid included scope
      */
     public Set<Artifact> filter( Set<Artifact> artifacts )
         throws ArtifactFilterException
     {
         Set<Artifact> results = artifacts;
 
-        if ( StringUtils.isNotEmpty( includeScope ) )
+        if ( isNotEmpty( includeScope ) )
         {
             if ( !Artifact.SCOPE_COMPILE.equals( includeScope ) && !Artifact.SCOPE_TEST.equals( includeScope )
                 && !Artifact.SCOPE_PROVIDED.equals( includeScope ) && !Artifact.SCOPE_RUNTIME.equals( includeScope )
@@ -91,7 +92,7 @@ public class ScopeFilter
                 }
             }
         }
-        else if ( StringUtils.isNotEmpty( excludeScope ) )
+        else if ( isNotEmpty( excludeScope ) )
         {
             if ( !Artifact.SCOPE_COMPILE.equals( excludeScope ) && !Artifact.SCOPE_TEST.equals( excludeScope )
                 && !Artifact.SCOPE_PROVIDED.equals( excludeScope ) && !Artifact.SCOPE_RUNTIME.equals( excludeScope )
@@ -155,6 +156,8 @@ public class ScopeFilter
     }
 
     /**
+     * <p>Getter for the field <code>includeScope</code>.</p>
+     *
      * @return Returns the includeScope.
      */
     public String getIncludeScope()
@@ -163,6 +166,8 @@ public class ScopeFilter
     }
 
     /**
+     * <p>Setter for the field <code>includeScope</code>.</p>
+     *
      * @param scope
      *            The includeScope to set.
      */
@@ -172,6 +177,8 @@ public class ScopeFilter
     }
 
     /**
+     * <p>Getter for the field <code>excludeScope</code>.</p>
+     *
      * @return Returns the excludeScope.
      */
     public String getExcludeScope()
@@ -180,6 +187,8 @@ public class ScopeFilter
     }
 
     /**
+     * <p>Setter for the field <code>excludeScope</code>.</p>
+     *
      * @param scope
      *            The excludeScope to set.
      */
