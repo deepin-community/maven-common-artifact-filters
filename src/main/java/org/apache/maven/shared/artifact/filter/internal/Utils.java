@@ -1,4 +1,4 @@
-package org.apache.maven.shared.artifact.filter.resolve;
+package org.apache.maven.shared.artifact.filter.internal;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -9,7 +9,7 @@ package org.apache.maven.shared.artifact.filter.resolve;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -20,26 +20,25 @@ package org.apache.maven.shared.artifact.filter.resolve;
  */
 
 /**
- * The element interface of the visitor pattern for transforming filters.
+ * Utilities.
  *
- * @author Robert Scholte
- * @since 3.0
+ * @since TBD
  */
-public interface TransformableFilter
+public final class Utils
 {
+    private Utils()
+    {
+    }
+
     /**
-     * Subclasses should include the following code:
-     * <pre>
-     *   &#64;Override
-     *   public abstract &lt;T&gt; T transform( FilterTransformer&lt;T&gt; transformer )
-     *   {
-     *       return transformer.transform( this );
-     *   }
-     * </pre>
+     * <p>Checks if a String is non <code>null</code> and is
+     * not empty (<code>length &gt; 0</code>).</p>
      *
-     * @param <T> the interface of the tool specific filter
-     * @param transformer the tool specific transformer, may not be {@code null}
-     * @return the transformed value, never {@code null}
+     * @param str the String to check
+     * @return true if the String is non-null, and not length zero
      */
-    <T> T transform( FilterTransformer<T> transformer );
+    public static boolean isNotEmpty( String str )
+    {
+        return ( ( str != null ) && ( str.length() > 0 ) );
+    }
 }

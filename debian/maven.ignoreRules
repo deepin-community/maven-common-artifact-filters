@@ -14,5 +14,6 @@
 # from the POM
 #   junit junit jar s/3\\..*/3.x/
 
+org.openjdk.jmh * * * * *
 org.sonatype.aether aether-* * * * *
 org.sonatype.sisu sisu-inject-plexus * * * *

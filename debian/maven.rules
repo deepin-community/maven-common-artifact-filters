@@ -22,6 +22,4 @@ org.apache.maven maven-artifact   * s/.*/3.x/ * *
 org.apache.maven maven-core       * s/.*/3.x/ * *
 org.apache.maven maven-model      * s/.*/3.x/ * *
 org.apache.maven maven-plugin-api * s/.*/3.x/ * *
-
-s/org.eclipse.aether/org.apache.maven.resolver/ s/aether-api/maven-resolver-api/ * s/.*/debian/ * *
-s/org.eclipse.aether/org.apache.maven.resolver/ s/aether-util/maven-resolver-util/ * s/.*/debian/ * *
+org.apache.maven.shared maven-shared-components pom s/.*/debian/ * *

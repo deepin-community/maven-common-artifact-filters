@@ -1,0 +1,23 @@
+Description: Disables the JMH performance test
+Author: Emmanuel Bourg <ebourg@apache.org>
+Forwarded: not-needed
+--- a/pom.xml
++++ b/pom.xml
+@@ -143,4 +143,17 @@
+       <scope>test</scope>
+     </dependency>
+   </dependencies>
++
++  <build>
++    <plugins>
++      <plugin>
++        <artifactId>maven-compiler-plugin</artifactId>
++        <configuration>
++          <testExcludes>
++            <testExclude>**/*PerfTest*</testExclude>
++          </testExcludes>
++        </configuration>
++      </plugin>
++    </plugins>
++  </build>
+ </project>

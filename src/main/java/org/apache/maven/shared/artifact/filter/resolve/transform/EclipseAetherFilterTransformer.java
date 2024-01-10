@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.Objects.requireNonNull;
+
 import org.apache.maven.shared.artifact.filter.resolve.AbstractFilter;
 import org.apache.maven.shared.artifact.filter.resolve.AndFilter;
 import org.apache.maven.shared.artifact.filter.resolve.ExclusionsFilter;
@@ -35,7 +37,6 @@ import org.apache.maven.shared.artifact.filter.resolve.PatternInclusionsFilter;
 import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.resolve.TransformableFilter;
 import org.eclipse.aether.graph.DependencyFilter;
-import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.util.filter.AndDependencyFilter;
 import org.eclipse.aether.util.filter.ExclusionsDependencyFilter;
 import org.eclipse.aether.util.filter.OrDependencyFilter;
@@ -45,7 +46,7 @@ import org.eclipse.aether.util.filter.ScopeDependencyFilter;
 
 /**
  * FilterTransformer implementation for Eclipse Aether.
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
@@ -53,11 +54,12 @@ public class EclipseAetherFilterTransformer
     implements FilterTransformer<DependencyFilter>
 {
     /**
-     * When using as regular expression, group(1) + group(3) will be the coordinate, 
+     * When using as regular expression, group(1) + group(3) will be the coordinate,
      * group(2) will be the classifier.
      */
     private static final String GAE_C_V = "(.*:.*:.*):(.+)(:.*)";
-    
+
+    /** {@inheritDoc} */
     @Override
     public AndDependencyFilter transform( AndFilter andFilter )
     {
@@ -69,12 +71,14 @@ public class EclipseAetherFilterTransformer
         return new AndDependencyFilter( filters );
     }
 
+    /** {@inheritDoc} */
     @Override
     public ExclusionsDependencyFilter transform( ExclusionsFilter filter )
     {
         return new ExclusionsDependencyFilter( filter.getExcludes() );
     }
 
+    /** {@inheritDoc} */
     @Override
     public OrDependencyFilter transform( OrFilter orFilter )
     {
@@ -86,25 +90,28 @@ public class EclipseAetherFilterTransformer
         return new OrDependencyFilter( filters );
     }
 
+    /** {@inheritDoc} */
     @Override
     public ScopeDependencyFilter transform( ScopeFilter filter )
     {
         return new ScopeDependencyFilter( filter.getIncluded(), filter.getExcluded() );
     }
-    
+
+    /** {@inheritDoc} */
     @Override
     public DependencyFilter transform( PatternExclusionsFilter filter )
     {
         return new PatternExclusionsDependencyFilter( filter.getExcludes() );
-    } 
+    }
 
+    /** {@inheritDoc} */
     @Override
     public DependencyFilter transform( PatternInclusionsFilter filter )
     {
         // if any include contains a classifier:
         // split all includes and make it an or-filter for every include
         // for the classifier, add an and-filter with a classifierfilter and patterninclusionfilter
-        
+
         for ( String include : filter.getIncludes() )
         {
             if ( include.matches( GAE_C_V ) )
@@ -112,21 +119,21 @@ public class EclipseAetherFilterTransformer
                 return newAdvancedPatternInclusionFilter( filter.getIncludes() );
             }
         }
-        
+
         return new PatternInclusionsDependencyFilter( filter.getIncludes() );
     }
-    
+
+    /** {@inheritDoc} */
     @Override
     public DependencyFilter transform( final AbstractFilter filter )
     {
-        return new DependencyFilter()
+        return ( node, parents ) ->
         {
-            @Override
-            public boolean accept( DependencyNode node, List<DependencyNode> parents )
-            {
-                return filter.accept( new EclipseAetherNode( node ), null );
-            }
-        }; 
+            requireNonNull( node, "node cannot be null" );
+            requireNonNull( parents, "parents cannot be null" );
+
+            return filter.accept( new EclipseAetherNode( node ), null );
+        };
     }
 
     private DependencyFilter newAdvancedPatternInclusionFilter( Collection<String> includes )
@@ -143,26 +150,23 @@ public class EclipseAetherFilterTransformer
                     new PatternInclusionsDependencyFilter( matcher.group( 1 ) + matcher.group( 3 ) );
 
                 final String classifier = matcher.group( 2 );
-                
-                DependencyFilter classifierFilter = new DependencyFilter()
-                {
-                    @Override
-                    public boolean accept( DependencyNode node, List<DependencyNode> parents )
-                    {
-                        String nodeClassifier = node.getArtifact().getClassifier();
-                        
-                        if ( nodeClassifier == null )
-                        {
-                            return false;
-                        }
-                        else 
-                        {
-                            return "*".equals( classifier ) || nodeClassifier.matches( classifier );
-                        }
-                    }
-                };
 
-                filters.add( new AndDependencyFilter( patternFilter, classifierFilter ) );
+                filters.add( new AndDependencyFilter( patternFilter, ( node, parents ) ->
+                {
+                    requireNonNull( node, "node cannot be null" );
+                    requireNonNull( parents, "parents cannot be null" );
+
+                    String nodeClassifier = node.getArtifact().getClassifier();
+
+                    if ( nodeClassifier == null )
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return "*".equals( classifier ) || nodeClassifier.matches( classifier );
+                    }
+                } ) );
             }
             else
             {

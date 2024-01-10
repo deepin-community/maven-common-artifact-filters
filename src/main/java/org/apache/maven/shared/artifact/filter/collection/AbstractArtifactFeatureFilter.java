@@ -26,11 +26,12 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.shared.utils.StringUtils;
+
+import static org.apache.maven.shared.artifact.filter.internal.Utils.isNotEmpty;
 
 /**
  * This is the common base class of ClassifierFilter and TypeFilter
- * 
+ *
  * @author <a href="richardv@mxtelecom.com">Richard van der Hoff</a>
  */
 public abstract class AbstractArtifactFeatureFilter
@@ -45,6 +46,8 @@ public abstract class AbstractArtifactFeatureFilter
     private List<String> excludes;
 
     /**
+     * <p>Constructor for AbstractArtifactFeatureFilter.</p>
+     *
      * @param include comma separated list with includes.
      * @param exclude comma separated list with excludes.
      */
@@ -55,10 +58,9 @@ public abstract class AbstractArtifactFeatureFilter
     }
 
     /**
+     * {@inheritDoc}
+     *
      * This function determines if filtering needs to be performed. Includes are processed before Excludes.
-     * 
-     * @param artifacts the set of dependencies to filter.
-     * @return a Set of filtered dependencies.
      */
     public Set<Artifact> filter( Set<Artifact> artifacts )
     {
@@ -144,35 +146,41 @@ public abstract class AbstractArtifactFeatureFilter
 
     /**
      * Should return the type or classifier of the given artifact, so that we can filter it
-     * 
+     *
      * @param artifact artifact to return type or classifier of
      * @return type or classifier
      */
     protected abstract String getArtifactFeature( Artifact artifact );
 
     /**
+     * <p>Setter for the field <code>excludes</code>.</p>
+     *
      * @param excludeString comma separated list with excludes.
      */
     public void setExcludes( String excludeString )
     {
-        if ( StringUtils.isNotEmpty( excludeString ) )
+        if ( isNotEmpty( excludeString ) )
         {
-            this.excludes = Arrays.asList( StringUtils.split( excludeString, "," ) );
+            this.excludes = Arrays.asList( excludeString.split( "," ) );
         }
     }
 
     /**
+     * <p>Setter for the field <code>includes</code>.</p>
+     *
      * @param includeString comma separated list with includes.
      */
     public void setIncludes( String includeString )
     {
-        if ( StringUtils.isNotEmpty( includeString ) )
+        if ( isNotEmpty( includeString ) )
         {
-            this.includes = Arrays.asList( StringUtils.split( includeString, "," ) );
+            this.includes = Arrays.asList( includeString.split( "," ) );
         }
     }
 
     /**
+     * <p>Getter for the field <code>excludes</code>.</p>
+     *
      * @return Returns the excludes.
      */
     public List<String> getExcludes()
@@ -181,6 +189,8 @@ public abstract class AbstractArtifactFeatureFilter
     }
 
     /**
+     * <p>Getter for the field <code>includes</code>.</p>
+     *
      * @return Returns the includes.
      */
     public List<String> getIncludes()
